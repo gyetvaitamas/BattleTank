@@ -3,20 +3,14 @@
 
 #include "Tank.h"
 
-// Get the target and location where the entity is aiming at
-void ATank::AimAt(FVector HitLocation)
-{
-	auto OurTankName = GetName();
-
-	UE_LOG(LogTemp, Warning, TEXT("%s aim at %s"), *OurTankName, *HitLocation.ToString());
-	return;
-}
-
 // Sets default values
 ATank::ATank()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// No need to protect pointers as added at construction
+	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName("AimingComponent"));
 
 }
 
@@ -41,3 +35,9 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+// Get the target and location where the entity is aiming at
+void ATank::AimAt(FVector HitLocation)
+{
+	TankAimingComponent->AimAt(HitLocation);
+	return;
+}
