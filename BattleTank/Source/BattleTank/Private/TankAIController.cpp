@@ -37,3 +37,14 @@ void ATankAIController::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("AI found player: %s"), *(PlayerTank->GetName()));
 	}
 }
+
+void ATankAIController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	
+	if (GetPlayerTank())
+	{
+		// Get the location where the AI is aiming at
+		GetControlledTank()->AimAt(GetPlayerTank()->GetActorLocation());
+	}
+}

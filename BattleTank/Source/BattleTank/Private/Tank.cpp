@@ -3,6 +3,15 @@
 
 #include "Tank.h"
 
+// Get the target and location where the entity is aiming at
+void ATank::AimAt(FVector HitLocation)
+{
+	auto OurTankName = GetName();
+
+	UE_LOG(LogTemp, Warning, TEXT("%s aim at %s"), *OurTankName, *HitLocation.ToString());
+	return;
+}
+
 // Sets default values
 ATank::ATank()
 {
