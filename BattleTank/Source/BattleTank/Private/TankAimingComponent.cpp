@@ -15,25 +15,6 @@ UTankAimingComponent::UTankAimingComponent()
 	// ...
 }
 
-
-// Called when the game starts
-void UTankAimingComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-	
-}
-
-
-// Called every frame
-void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
 // Get the target and location where the entity is aiming at
 void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 {
@@ -50,12 +31,15 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 	FVector OutLaunchVerlocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
 
-	if (UGameplayStatics::SuggestProjectileVelocity(this, OutLaunchVerlocity, StartLocation, HitLocation, LaunchSpeed, false, 0, 0, ESuggestProjVelocityTraceOption::DoNotTrace))
+	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(this, OutLaunchVerlocity, StartLocation, HitLocation, LaunchSpeed, ESuggestProjVelocityTraceOption::DoNotTrace);
+
+	if (bHaveAimSolution)
 	{
 		auto AimDirection = OutLaunchVerlocity.GetSafeNormal();
-		auto TankName = GetOwner()->GetName();
-		
-		UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s"), *TankName, *AimDirection.ToString());
+		//auto TankName = GetOwner()->GetName();
+		//UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s"), *TankName, *AimDirection.ToString());
+
+		MoveBarrelTowards(AimDirection);
 	}
 	
 	// If no solution then do nothing
@@ -65,4 +49,15 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 void UTankAimingComponent::SetBarrelReference(UStaticMeshComponent* BarrelToSet)
 {
 	Barrel = BarrelToSet;
+}
+
+void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
+{
+	auto BarrelRotation = Barrel->GetForwardVector().Rotation();
+	auto AimAsRotator = AimDirection.Rotation();
+	auto DeltaRotator = AimAsRotator - BarrelRotation;
+
+	UE_LOG(LogTemp, Warning, TEXT("AimRotator: %s"), *AimAsRotator.ToString());
+
+
 }
