@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "TankAimingComponent.h"
 #include <Kismet/GameplayStatics.h>
 #include "TankBarrel.h"
-#include "TankAimingComponent.h"
 
 
 // Sets default values for this component's properties
@@ -24,22 +24,19 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 
 	//UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s from %s location"), *OurTankName, *HitLocation.ToString(), *BarrelLocation);
 
-	if (!Barrel)
-	{
-		return;
-	}
+	if (!Barrel) { return; }
 
 	FVector OutLaunchVerlocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
 
-	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(this, OutLaunchVerlocity, StartLocation, HitLocation, LaunchSpeed, ESuggestProjVelocityTraceOption::DoNotTrace);
+	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(this, OutLaunchVerlocity, StartLocation, HitLocation, LaunchSpeed, false, 0, 0, ESuggestProjVelocityTraceOption::DoNotTrace);
 	auto Time = GetWorld()->GetTimeSeconds();
 
 	if (bHaveAimSolution)
 	{
 		auto AimDirection = OutLaunchVerlocity.GetSafeNormal();
 		//auto TankName = GetOwner()->GetName();
-		//UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s"), *TankName, *AimDirection.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s"), *TankName, *OutLaunchVerlocity.ToString());
 
 		MoveBarrelTowards(AimDirection);
 		UE_LOG(LogTemp, Warning, TEXT("%f Aim solution found!"), Time);
@@ -66,7 +63,7 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 
 	//UE_LOG(LogTemp, Warning, TEXT("AimRotator: %s"), *AimAsRotator.ToString());
 
-	Barrel->Elevate(5);
+	Barrel->Elevate(1);
 
 
 }
