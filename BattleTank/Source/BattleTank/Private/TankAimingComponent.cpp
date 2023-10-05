@@ -63,7 +63,7 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 
 	//UE_LOG(LogTemp, Warning, TEXT("AimRotator: %s"), *AimAsRotator.ToString());
 
-	Barrel->Elevate(DeltaRotator.Pitch);
+	Barrel->Elevate(1);
 
 
 }
