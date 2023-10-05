@@ -9,6 +9,7 @@
 
 
 class UTankBarrel; // Forward declaration
+class UTankTurret; // Forward declaration
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -18,11 +19,11 @@ class BATTLETANK_API ATank : public APawn
 public:
 	void AimAt(FVector HitLocation);
 
-	UFUNCTION(BlueprintCallable, Category=Setup)
-	void SetBarrelReference(UTankBarrel* BarrelToSet);
+	UFUNCTION(BlueprintCallable, Category = Setup)
+	void SetTurretReference(UTankTurret* TurretToSet);
 
 	UFUNCTION(BlueprintCallable, Category=Setup)
-	void SetTurretReference(UTankTurret* TurretToSet);
+	void SetBarrelReference(UTankBarrel* BarrelToSet);
 
 private:
 	// Sets default values for this pawn's properties
