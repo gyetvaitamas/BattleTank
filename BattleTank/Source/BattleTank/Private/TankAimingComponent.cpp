@@ -4,6 +4,7 @@
 #include "TankAimingComponent.h"
 #include <Kismet/GameplayStatics.h>
 #include "TankBarrel.h"
+#include "TankTurret.h"
 
 
 // Sets default values for this component's properties
@@ -19,12 +20,11 @@ UTankAimingComponent::UTankAimingComponent()
 // Get the target and location where the entity is aiming at
 void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 {
-	//auto OurTankName = GetOwner()->GetName();
-	//auto BarrelLocation = Barrel->GetComponentLocation().ToString();
-
-	//UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s from %s location"), *OurTankName, *HitLocation.ToString(), *BarrelLocation);
-
-	if (!Barrel) { return; }
+	if (!Barrel) 
+	{ 
+		UE_LOG(LogTemp, Warning, TEXT("ASD"));
+		return; 
+	}
 
 	FVector OutLaunchVerlocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
@@ -35,11 +35,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 	if (bHaveAimSolution)
 	{
 		auto AimDirection = OutLaunchVerlocity.GetSafeNormal();
-		//auto TankName = GetOwner()->GetName();
-		//UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s"), *TankName, *OutLaunchVerlocity.ToString());
-
 		MoveBarrelTowards(AimDirection);
-		UE_LOG(LogTemp, Warning, TEXT("%f Aim solution found!"), Time);
 	}
 	else
 	{
@@ -50,10 +46,18 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 	return;
 }
 
+void UTankAimingComponent::SetTurretReference(UTankTurret* TurretToSet)
+{
+	if (!Turret) { return; }
+	Turret = TurretToSet;
+}
+
 void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
+	if (!Barrel) { return; }
 	Barrel = BarrelToSet;
 }
+
 
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
@@ -61,9 +65,9 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 	auto AimAsRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimAsRotator - BarrelRotation;
 
-	//UE_LOG(LogTemp, Warning, TEXT("AimRotator: %s"), *AimAsRotator.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("AimRotator: %s"), *AimAsRotator.ToString());
 
-	Barrel->Elevate(1);
-
+	Turret->Rotate(DeltaRotator.Yaw);
+	Barrel->Elevate(DeltaRotator.Pitch);
 
 }
